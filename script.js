@@ -146,17 +146,3 @@ if (deleteBtn) {
   });
 }
 
-// ✅ Upload profile picture
-const savePicBtn = document.getElementById("savePic");
-if (savePicBtn) {
-  savePicBtn.addEventListener("click", async () => {
-    const file = document.getElementById("uploadPic").files[0];
-    if (!file) return alert("Choose a file first!");
-    const storageRef = ref(storage, `profilePics/${auth.currentUser.uid}`);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    await updateProfile(auth.currentUser, { photoURL: url });
-    document.getElementById("profilePic").src = url;
-    alert("Profile picture updated!");
-  });
-}
