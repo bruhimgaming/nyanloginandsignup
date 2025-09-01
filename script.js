@@ -36,8 +36,18 @@ let signupCard = document.getElementById("signupCard");
 // Toggle forms animation
 window.showSignup = () => {
   loginCard.classList.add("slide-left");
+  loginCard.classList.remove("slide-right");
   signupCard.classList.remove("slide-right");
-}
+  signupCard.classList.remove("slide-left");
+};
+
+window.showLogin = () => {
+  signupCard.classList.add("slide-right");
+  signupCard.classList.remove("slide-left");
+  loginCard.classList.remove("slide-left");
+  loginCard.classList.remove("slide-right");
+};
+
 
 window.showLogin = () => {
   signupCard.classList.add("slide-right");
