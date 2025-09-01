@@ -3,12 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>Nyan Login / Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script type="module">
-    // Import Firebase modular SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      signInAnonymously, 
+      signOut, 
+      sendPasswordResetEmail, 
+      sendEmailVerification, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-    // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCUxwVkAcSfiwpRLsXlvSO03lvPAsfXaDg",
       authDomain: "nyan-login-and-signup.firebaseapp.com",
@@ -19,35 +29,54 @@
       measurementId: "G-7EQ61WYK18"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-    // Signup function
+    onAuthStateChanged(auth, (user) => {
+      const welcomeDiv = document.getElementById("welcome");
+      if (user) {
+        welcomeDiv.textContent = `Welcome, ${user.isAnonymous ? "Guest" : user.displayName || user.email}!`;
+        document.getElementById("logoutBtn").style.display = "inline-block";
+      } else {
+        welcomeDiv.textContent = "";
+        document.getElementById("logoutBtn").style.display = "none";
+      }
+    });
+
     window.signup = function() {
-      const email = document.getElementById("email").value;
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
+      if (!email || !password) { alert("Enter email & password."); return; }
       createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          alert("Signup successful!");
-          window.location.href = "https://sites.google.com/view/nyancorp/home?read_current=1";
+        .then((userCredential) => {
+          const user = userCredential.user;
+          sendEmailVerification(user)
+            .then(() => alert("Verification email sent! Please check your inbox."))
+            .catch(e => alert(e.message));
+          alert("Signup successful! Verify email before logging in.");
         })
         .catch(error => alert(error.message));
     };
 
-    // Login function
     window.login = function() {
-      const email = document.getElementById("email").value;
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
+      if (!email || !password) { alert("Enter email & password."); return; }
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          alert("Login successful!");
-          window.location.href = "https://sites.google.com/view/nyancorp/home?read_current=1";
+        .then((userCredential) => {
+          const user = userCredential.user;
+          if (!user.emailVerified) {
+            alert("Please verify your email before logging in.");
+            signOut(auth);
+          } else {
+            alert("Login successful!");
+            window.location.href = "https://sites.google.com/view/nyancorp/home?read_current=1";
+          }
         })
         .catch(error => alert(error.message));
     };
 
-    // Guest login function
     window.guestLogin = function() {
       signInAnonymously(auth)
         .then(() => {
@@ -56,44 +85,154 @@
         })
         .catch(error => alert(error.message));
     };
+
+    window.googleLogin = function() {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          alert(`Google login successful! Welcome ${user.displayName || user.email}`);
+          window.location.href = "https://sites.google.com/view/nyancorp/home?read_current=1";
+        })
+        .catch(error => alert(error.message));
+    };
+
+    window.forgotPassword = function() {
+      const email = prompt("Enter your email for password reset:");
+      if (!email) return;
+      sendPasswordResetEmail(auth, email)
+        .then(() => alert("Password reset email sent!"))
+        .catch(error => alert(error.message));
+    };
+
+    window.logout = function() {
+      signOut(auth)
+        .then(() => {
+          alert("You have been logged out!");
+        })
+        .catch(error => alert(error.message));
+    };
   </script>
+
   <style>
     body {
-      background-color: black;
+      background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
       color: white;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
+
+    .container {
+      background-color: #111;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: fadeIn 0.8s forwards;
     }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #logo {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 20px;
+      animation: popIn 0.6s forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 30px;
+      color: #0b84ff;
+    }
+
+    #welcome {
+      margin-bottom: 15px;
+      font-size: 16px;
+      color: #a0a0a0;
+    }
+
     input {
-      width: 220px;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+      transition: 0.2s;
     }
+
+    input:focus {
+      box-shadow: 0 0 8px #0b84ff;
+      border: 1px solid #0b84ff;
+    }
+
     button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
       background-color: #0b84ff;
       color: white;
       cursor: pointer;
+      transition: 0.2s transform, 0.2s background-color;
     }
+
     button:hover {
       background-color: #0960c1;
+      transform: scale(1.05);
+    }
+
+    #logoutBtn {
+      display: none;
+      background-color: #ff3b3b;
+    }
+
+    #logoutBtn:hover {
+      background-color: #c12a2a;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 500px) {
+      .container { padding: 30px 20px; }
+      h1 { font-size: 24px; }
+      #logo { width: 80px; height: 80px; }
     }
   </style>
 </head>
 <body>
-  <h1>Nyan Login / Signup</h1>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <br>
-  <button onclick="signup()">Sign Up</button>
-  <button onclick="login()">Log In</button>
-  <button onclick="guestLogin()">Continue as Guest</button>
+  <div class="container">
+    <img id="logo" src="nyan.png" alt="Nyan Logo">
+    <h1>Nyan Login / Signup</h1>
+    <div id="welcome"></div>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Log In</button>
+    <button onclick="guestLogin()">Continue as Guest</button>
+    <button onclick="googleLogin()">Log in with Google</button>
+    <button onclick="forgotPassword()">Forgot Password?</button>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+  </div>
 </body>
 </html>
