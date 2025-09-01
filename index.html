@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login / Signup Page</title>
+  <title>Nyan Login / Signup</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <style>
@@ -37,45 +37,57 @@
 </head>
 <body>
 
-  <h1>Login / Signup</h1>
+  <h1>Nyan Login / Signup</h1>
 
+  <!-- Email / Password -->
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
   <br>
   <button onclick="signup()">Sign Up</button>
   <button onclick="login()">Log In</button>
+  <button onclick="guestLogin()">Continue as Guest</button>
 
   <script>
-    // 1️⃣ Replace these values with your Firebase project info
+    // Replace with your Firebase config
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
       projectId: "YOUR_PROJECT_ID"
     };
 
-    // 2️⃣ Initialize Firebase
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // 3️⃣ Signup function
+    // Email / Password signup
     function signup() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       auth.createUserWithEmailAndPassword(email, password)
         .then(() => {
           alert("Signup successful!");
+          window.location.href = "https://sites.google.com/view/nyancorp/home?read_current=1";
         })
         .catch(error => alert(error.message));
     }
 
-    // 4️⃣ Login function
+    // Email / Password login
     function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       auth.signInWithEmailAndPassword(email, password)
         .then(() => {
           alert("Login successful!");
-          // Redirect after login
+          window.location.href = "https://sites.google.com/view/nyancorp/home?read_current=1";
+        })
+        .catch(error => alert(error.message));
+    }
+
+    // Guest login
+    function guestLogin() {
+      auth.signInAnonymously()
+        .then(() => {
+          alert("Guest login successful!");
           window.location.href = "https://sites.google.com/view/nyancorp/home?read_current=1";
         })
         .catch(error => alert(error.message));
