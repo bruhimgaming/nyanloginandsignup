@@ -13,14 +13,7 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { 
-  getStorage, 
-  ref, 
-  uploadBytes, 
-  getDownloadURL 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-// 🔹 Your Firebase Config
+// 🔹 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCUxwVkAcSfiwpRLsXlvSO03lvPAsfXaDg",
   authDomain: "nyan-login-and-signup.firebaseapp.com",
@@ -31,39 +24,44 @@ const firebaseConfig = {
   measurementId: "G-7EQ61WYK18"
 };
 
-// 🔹 Init
+// 🔹 Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const storage = getStorage(app);
+const provider = new GoogleAuthProvider();
 
-// ✅ Redirect logged-in users to account.html
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    if (window.location.pathname.endsWith("index.html")) {
-      window.location.href = "account.html";
-    } else if (window.location.pathname.endsWith("account.html")) {
-      document.getElementById("userInfo").textContent = `Logged in as: ${user.email}`;
-      if (user.photoURL) {
-        document.getElementById("profilePic").src = user.photoURL;
-      }
-    }
-  } else {
-    if (window.location.pathname.endsWith("account.html")) {
-      window.location.href = "index.html";
-    }
-  }
-});
+// 🔹 Card elements
+let loginCard = document.getElementById("loginCard");
+let signupCard = document.getElementById("signupCard");
 
-// ✅ Signup
+// Toggle forms animation
+window.showSignup = () => {
+  loginCard.classList.add("slide-left");
+  signupCard.classList.remove("slide-right");
+}
+
+window.showLogin = () => {
+  signupCard.classList.add("slide-right");
+  loginCard.classList.remove("slide-left");
+}
+
+// ✅ Signup with username
 const signupForm = document.getElementById("signupForm");
 if (signupForm) {
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("signupEmail").value;
     const password = document.getElementById("signupPassword").value;
+    const username = document.getElementById("signupUsername").value;
+
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Account created!");
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Set username
+      await updateProfile(user, { displayName: username });
+
+      alert(`Account created! Welcome, ${username}`);
+      window.location.href = "account.html";
     } catch (err) {
       alert(err.message);
     }
@@ -90,7 +88,7 @@ const googleBtn = document.getElementById("googleLogin");
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      await signInWithPopup(auth, provider);
     } catch (err) {
       alert(err.message);
     }
@@ -117,7 +115,7 @@ if (logoutBtn) {
   });
 }
 
-// ✅ Reset password
+// ✅ Reset password for logged-in user
 const resetPasswordBtn = document.getElementById("resetPassword");
 if (resetPasswordBtn) {
   resetPasswordBtn.addEventListener("click", async () => {
@@ -145,4 +143,26 @@ if (deleteBtn) {
     }
   });
 }
+
+// ✅ Redirect logged-in users and show info
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    if (window.location.pathname.endsWith("index.html")) {
+      window.location.href = "account.html";
+    } else if (window.location.pathname.endsWith("account.html")) {
+      document.getElementById("userInfo").textContent = user.displayName
+        ? `Logged in as: ${user.displayName} (${user.email})`
+        : `Logged in as: ${user.email}`;
+
+      const profilePic = document.getElementById("profilePic");
+      if (profilePic) {
+        profilePic.src = user.photoURL ? user.photoURL : "nyan.png";
+      }
+    }
+  } else {
+    if (window.location.pathname.endsWith("account.html")) {
+      window.location.href = "index.html";
+    }
+  }
+});
 
