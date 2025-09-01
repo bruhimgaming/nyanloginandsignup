@@ -114,5 +114,42 @@ input:focus {
   button, input {
     width: 100%;
   }
+
+/* Card container for overlapping cards */
+.card-container {
+  position: relative;
+  width: 350px;
+  max-width: 90%;
+  height: 360px; /* adjust to fit your forms */
+  perspective: 1000px;
 }
 
+/* Form cards stacked */
+.form-card {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease;
+}
+
+/* Slide animations */
+.form-card.slide-left {
+  transform: translateX(-400px) rotateY(-15deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.form-card.slide-right {
+  transform: translateX(400px) rotateY(15deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Smooth fade-in when active */
+.form-card:not(.slide-left):not(.slide-right) {
+  transform: translateX(0) rotateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
