@@ -13,7 +13,7 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// 🔹 Your Firebase Config
+// 🔹 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCUxwVkAcSfiwpRLsXlvSO03lvPAsfXaDg",
   authDomain: "nyan-login-and-signup.firebaseapp.com",
@@ -28,7 +28,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// ✅ Redirect logged-in users to account.html
+// ✅ Redirect logged-in users
 onAuthStateChanged(auth, (user) => {
   if (user) {
     if (window.location.pathname.endsWith("index.html")) {
@@ -43,16 +43,19 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// 🔹 Login / Signup / Logout / Google Login / Password / Verify / Delete
-// ✅ Signup
+// 🔹 Login / Signup
+
+// Signup
 const signupForm = document.getElementById("signupForm");
 if (signupForm) {
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("signupEmail").value;
     const password = document.getElementById("signupPassword").value;
+    const username = document.getElementById("signupUsername").value;
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: username });
       alert("Account created!");
     } catch (err) {
       alert(err.message);
@@ -60,7 +63,7 @@ if (signupForm) {
   });
 }
 
-// ✅ Login
+// Login
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
@@ -75,7 +78,7 @@ if (loginForm) {
   });
 }
 
-// ✅ Google login
+// Google login
 const googleBtn = document.getElementById("googleLogin");
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {
@@ -87,7 +90,7 @@ if (googleBtn) {
   });
 }
 
-// ✅ Forgot password
+// Forgot password
 const forgotPassword = document.getElementById("forgotPassword");
 if (forgotPassword) {
   forgotPassword.addEventListener("click", async () => {
@@ -99,39 +102,52 @@ if (forgotPassword) {
   });
 }
 
-// ✅ Logout
+// 🔹 Account Page Buttons
+
+// Logout
 const logoutBtn = document.getElementById("logout");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     await signOut(auth);
+    window.location.href = "index.html";
   });
 }
 
-// ✅ Reset password
+// Reset password
 const resetPasswordBtn = document.getElementById("resetPassword");
 if (resetPasswordBtn) {
   resetPasswordBtn.addEventListener("click", async () => {
     const email = auth.currentUser.email;
     await sendPasswordResetEmail(auth, email);
-    alert("Reset email sent!");
+    alert("Reset password email sent!");
   });
 }
 
-// ✅ Verify email
+// Verify email
 const verifyBtn = document.getElementById("verifyEmail");
 if (verifyBtn) {
   verifyBtn.addEventListener("click", async () => {
-    await sendEmailVerification(auth.currentUser);
-    alert("Verification email sent!");
+    if (!auth.currentUser.emailVerified) {
+      await sendEmailVerification(auth.currentUser);
+      alert("Verification email sent! Check your inbox.");
+    } else {
+      alert("Your email is already verified.");
+    }
   });
 }
 
-// ✅ Delete account
+// Delete account
 const deleteBtn = document.getElementById("deleteAccount");
 if (deleteBtn) {
   deleteBtn.addEventListener("click", async () => {
     if (confirm("Are you sure you want to delete your account?")) {
-      await deleteUser(auth.currentUser);
+      try {
+        await deleteUser(auth.currentUser);
+        alert("Account deleted!");
+        window.location.href = "index.html";
+      } catch (err) {
+        alert("Error deleting account: " + err.message);
+      }
     }
   });
 }
@@ -153,4 +169,3 @@ window.showLogin = () => {
   loginCard.classList.remove("slide-left");
   loginCard.classList.remove("slide-right");
 };
-
