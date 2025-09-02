@@ -39,27 +39,27 @@ Check it out here:
 
 ## Features
 
-### ✅ Login & Signup
+### Login & Signup
 
 - Email/password signup and login  
-- Google Login integration for faster access  
+- guthub integration for faster access  
 - Persistent login – users stay logged in until logout  
 - Username support – displayed on the account page  
 
-### ✅ Account Management
+### Account Management
 
 - Logout – ends the user session  
 - Reset password – sends a password reset email  
 - Verify email – sends verification link if not verified  
 - Delete account – permanently deletes user account  
 
-### ✅ Responsive Design
+### Responsive Design
 
 - Black theme with white text for high contrast  
 - Polished card layout with smooth slide animations  
 - Mobile-friendly and works on all screen sizes  
 
-### ✅ Embed Option
+### Embed Option
 
 - The login/signup page can be embedded via **iframe** on other sites  
 - Fully interactable and scrollable  
