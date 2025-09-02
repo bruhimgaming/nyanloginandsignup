@@ -109,9 +109,7 @@ auth.onAuthStateChanged((user) => {
 });
 
 
-// =======================
-// GitHub Login
-// =======================
+// GitHub login
 document.getElementById("githubLogin")?.addEventListener("click", async () => {
   const provider = new firebase.auth.GithubAuthProvider();
 
@@ -119,13 +117,15 @@ document.getElementById("githubLogin")?.addEventListener("click", async () => {
     const result = await auth.signInWithPopup(provider);
     const user = result.user;
 
-    alert("Logged in with GitHub as " + (user.displayName || user.email));
-    console.log("GitHub login result:", result);
+    console.log("GitHub login success:", user);
+    alert("Logged in as " + (user.displayName || user.email));
+    window.location.href = "account.html"; // redirect after login
   } catch (error) {
-    console.error("GitHub login error:", error);
-    alert("GitHub login failed: " + error.message);
+    console.error("GitHub login failed:", error);
+    alert("Error: " + error.message);
   }
 });
+
 
 // =======================
 // Account Page Handling
