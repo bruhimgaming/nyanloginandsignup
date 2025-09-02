@@ -2,29 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nyan Account</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="script.js" defer></script>
 </head>
 <body>
-  <header>
-    <img src="nyan.png" class="logo" alt="Logo">
-    <h1>🐱 Your Account</h1>
-  </header>
+  <!-- Logo and title -->
+  <div class="logo-container">
+    <img src="nyan.png" alt="Nyan Logo" class="logo">
+    <h1>Your Account</h1>
+  </div>
 
-  <div class="card">
-    <!-- Profile Picture -->
-    <img id="profilePic" src="nyan.png" alt="Profile Picture" class="profile-pic">
+  <div class="account-container">
+    <p id="userInfo">Loading user info...</p>
 
-    <!-- User Info -->
-    <p id="userInfo">Loading...</p>
-
-    <!-- Actions -->
-    <button id="verifyEmail">Verify Email</button>
-    <button id="resetPassword">Reset Password</button>
-    <button id="deleteAccount">Delete Account</button>
+    <!-- Account actions -->
     <button id="logout">Logout</button>
+    <button id="resetPassword">Reset Password</button>
+    <button id="verifyEmail">Verify Email</button>
+    <button id="deleteAccount">Delete Account</button>
   </div>
 </body>
 </html>
-
