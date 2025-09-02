@@ -13,7 +13,7 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// 🔹 Firebase Config
+// 🔹 Your Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCUxwVkAcSfiwpRLsXlvSO03lvPAsfXaDg",
   authDomain: "nyan-login-and-signup.firebaseapp.com",
@@ -27,51 +27,33 @@ const firebaseConfig = {
 // 🔹 Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
-// 🔹 Card elements
-let loginCard = document.getElementById("loginCard");
-let signupCard = document.getElementById("signupCard");
+// ✅ Redirect logged-in users to account.html
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    if (window.location.pathname.endsWith("index.html")) {
+      window.location.href = "account.html";
+    } else if (window.location.pathname.endsWith("account.html")) {
+      document.getElementById("userInfo").textContent = `Logged in as: ${user.email}`;
+    }
+  } else {
+    if (window.location.pathname.endsWith("account.html")) {
+      window.location.href = "index.html";
+    }
+  }
+});
 
-// Toggle forms animation
-window.showSignup = () => {
-  loginCard.classList.add("slide-left");
-  loginCard.classList.remove("slide-right");
-  signupCard.classList.remove("slide-right");
-  signupCard.classList.remove("slide-left");
-};
-
-window.showLogin = () => {
-  signupCard.classList.add("slide-right");
-  signupCard.classList.remove("slide-left");
-  loginCard.classList.remove("slide-left");
-  loginCard.classList.remove("slide-right");
-};
-
-
-window.showLogin = () => {
-  signupCard.classList.add("slide-right");
-  loginCard.classList.remove("slide-left");
-}
-
-// ✅ Signup with username
+// 🔹 Login / Signup / Logout / Google Login / Password / Verify / Delete
+// ✅ Signup
 const signupForm = document.getElementById("signupForm");
 if (signupForm) {
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("signupEmail").value;
     const password = document.getElementById("signupPassword").value;
-    const username = document.getElementById("signupUsername").value;
-
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Set username
-      await updateProfile(user, { displayName: username });
-
-      alert(`Account created! Welcome, ${username}`);
-      window.location.href = "account.html";
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert("Account created!");
     } catch (err) {
       alert(err.message);
     }
@@ -98,7 +80,7 @@ const googleBtn = document.getElementById("googleLogin");
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (err) {
       alert(err.message);
     }
@@ -125,7 +107,7 @@ if (logoutBtn) {
   });
 }
 
-// ✅ Reset password for logged-in user
+// ✅ Reset password
 const resetPasswordBtn = document.getElementById("resetPassword");
 if (resetPasswordBtn) {
   resetPasswordBtn.addEventListener("click", async () => {
@@ -154,25 +136,21 @@ if (deleteBtn) {
   });
 }
 
-// ✅ Redirect logged-in users and show info
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    if (window.location.pathname.endsWith("index.html")) {
-      window.location.href = "account.html";
-    } else if (window.location.pathname.endsWith("account.html")) {
-      document.getElementById("userInfo").textContent = user.displayName
-        ? `Logged in as: ${user.displayName} (${user.email})`
-        : `Logged in as: ${user.email}`;
+// 🔹 Card toggle animation
+let loginCard = document.getElementById("loginCard");
+let signupCard = document.getElementById("signupCard");
 
-      const profilePic = document.getElementById("profilePic");
-      if (profilePic) {
-        profilePic.src = user.photoURL ? user.photoURL : "nyan.png";
-      }
-    }
-  } else {
-    if (window.location.pathname.endsWith("account.html")) {
-      window.location.href = "index.html";
-    }
-  }
-});
+window.showSignup = () => {
+  loginCard.classList.add("slide-left");
+  loginCard.classList.remove("slide-right");
+  signupCard.classList.remove("slide-right");
+  signupCard.classList.remove("slide-left");
+};
+
+window.showLogin = () => {
+  signupCard.classList.add("slide-right");
+  signupCard.classList.remove("slide-left");
+  loginCard.classList.remove("slide-left");
+  loginCard.classList.remove("slide-right");
+};
 
