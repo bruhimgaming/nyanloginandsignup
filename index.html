@@ -1,14 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nyan Login & Signup</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="script.js" defer></script>
 </head>
 <body>
+  <!-- Logo + Title -->
+  <header>
+    <img src="nyan.png" alt="Logo" class="logo">
+    <h1 class="title">Nyan Login & Signup</h1>
+  </header>
+
   <!-- Card container -->
   <div class="card-container">
     <!-- Login Card -->
@@ -19,13 +23,13 @@
         <input type="password" id="loginPassword" placeholder="Password" required>
         <button type="submit">Login</button>
       </form>
-      <button id="googleLogin">Login with Google</button>
+      <button id="githubLogin">Login with GitHub</button>
       <p><a href="#" onclick="showSignup()">Don't have an account? Sign Up</a></p>
       <p><a href="#" id="forgotPassword">Forgot Password?</a></p>
     </div>
 
     <!-- Signup Card -->
-    <div class="card" id="signupCard">
+    <div class="card" id="signupCard" style="display:none;">
       <h2>Sign Up</h2>
       <form id="signupForm">
         <input type="email" id="signupEmail" placeholder="Email" required>
@@ -37,24 +41,9 @@
     </div>
   </div>
 
-  <script>
-    // Show signup card and hide login card
-    function showSignup() {
-      document.getElementById("loginCard").style.display = "none";
-      document.getElementById("signupCard").style.display = "block";
-    }
-
-    // Show login card and hide signup card
-    function showLogin() {
-      document.getElementById("signupCard").style.display = "none";
-      document.getElementById("loginCard").style.display = "block";
-    }
-
-    // Start with login visible and signup hidden
-    window.onload = () => {
-      document.getElementById("loginCard").style.display = "block";
-      document.getElementById("signupCard").style.display = "none";
-    };
-  </script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
