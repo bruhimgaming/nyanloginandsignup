@@ -1,9 +1,9 @@
 // Replace with your Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCUxwVkAcSfiwpRLsXlvSO03lvPAsfXaDg",
+  authDomain: "nyan-login-and-signup.firebaseapp.com",
+  projectId: "nyan-login-and-signup",
+  appId: "1:733262246218:web:17c90c986664198bb311b3"
 };
 
 // Initialize Firebase
