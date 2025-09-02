@@ -169,3 +169,21 @@ window.showLogin = () => {
   loginCard.classList.remove("slide-left");
   loginCard.classList.remove("slide-right");
 };
+
+// Show signup card and hide login card
+function showSignup() {
+  document.getElementById("loginCard").style.display = "none";
+  document.getElementById("signupCard").style.display = "block";
+}
+
+// Show login card and hide signup card
+function showLogin() {
+  document.getElementById("signupCard").style.display = "none";
+  document.getElementById("loginCard").style.display = "block";
+}
+
+// Optional: start with login visible and signup hidden
+window.onload = () => {
+  document.getElementById("loginCard").style.display = "block";
+  document.getElementById("signupCard").style.display = "none";
+};
