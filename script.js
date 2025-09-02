@@ -35,16 +35,6 @@ document.getElementById("signupForm")?.addEventListener("submit", async (e) => {
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     await userCredential.user.updateProfile({ displayName: username });
 
-    // Send verification email
-    await userCredential.user.sendEmailVerification();
-    alert("Signup successful! Please check your email to verify before logging in.");
-
-    showLogin(); // Redirect to login form
-  } catch (error) {
-    alert(error.message);
-  }
-});
-
 // ==================== Email/Password Login ====================
 document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
