@@ -107,3 +107,63 @@ auth.onAuthStateChanged((user) => {
     console.log("Not logged in");
   }
 });
+
+
+// =======================
+// GitHub Login
+// =======================
+document.getElementById("githubLogin")?.addEventListener("click", async () => {
+  const provider = new firebase.auth.GithubAuthProvider();
+
+  try {
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
+
+    alert("Logged in with GitHub as " + (user.displayName || user.email));
+    console.log("GitHub login result:", result);
+  } catch (error) {
+    console.error("GitHub login error:", error);
+    alert("GitHub login failed: " + error.message);
+  }
+});
+
+// =======================
+// Account Page Handling
+// =======================
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    // Show account info if on account page
+    const usernameEl = document.getElementById("username");
+    const emailEl = document.getElementById("userEmail");
+    const verifiedEl = document.getElementById("emailVerified");
+    const profilePicEl = document.getElementById("profilePic");
+
+    if (usernameEl && emailEl && verifiedEl && profilePicEl) {
+      usernameEl.textContent = user.displayName || "No username set";
+      emailEl.textContent = user.email;
+      verifiedEl.textContent = user.emailVerified ? "✅ Yes" : "❌ No";
+      profilePicEl.src = user.photoURL || "nyan.png";
+    }
+  }
+});
+
+// Resend verification
+document.getElementById("resendVerification")?.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (user && !user.emailVerified) {
+    try {
+      await user.sendEmailVerification();
+      alert("Verification email sent!");
+    } catch (error) {
+      console.error("Resend verification error:", error);
+      alert("Error: " + error.message);
+    }
+  }
+});
+
+// Logout
+document.getElementById("logout")?.addEventListener("click", async () => {
+  await auth.signOut();
+  window.location.href = "index.html"; // back to login page
+});
+
