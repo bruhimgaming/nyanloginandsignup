@@ -2,18 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nyan Login</title>
+  <title>Nyan Login & Signup</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module" src="script.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- Logo and title -->
-  <div class="logo-container">
-    <img src="nyan.png" alt="Nyan Logo" class="logo">
-    <h1>Nyan Login</h1>
-  </div>
-
   <!-- Card container -->
   <div class="card-container">
     <!-- Login Card -->
@@ -41,5 +36,25 @@
       <p><a href="#" onclick="showLogin()">Already have an account? Login</a></p>
     </div>
   </div>
+
+  <script>
+    // Show signup card and hide login card
+    function showSignup() {
+      document.getElementById("loginCard").style.display = "none";
+      document.getElementById("signupCard").style.display = "block";
+    }
+
+    // Show login card and hide signup card
+    function showLogin() {
+      document.getElementById("signupCard").style.display = "none";
+      document.getElementById("loginCard").style.display = "block";
+    }
+
+    // Start with login visible and signup hidden
+    window.onload = () => {
+      document.getElementById("loginCard").style.display = "block";
+      document.getElementById("signupCard").style.display = "none";
+    };
+  </script>
 </body>
 </html>
