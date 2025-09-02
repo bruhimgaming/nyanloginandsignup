@@ -2,40 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nyan Login</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="script.js" defer></script>
 </head>
 <body>
-  <header>
-    <img src="nyan.png" class="logo" alt="Logo">
-    <h1>🐱 Nyan Login</h1>
-  </header>
+  <!-- Logo and title -->
+  <div class="logo-container">
+    <img src="nyan.png" alt="Nyan Logo" class="logo">
+    <h1>Nyan Login</h1>
+  </div>
 
+  <!-- Card container -->
   <div class="card-container">
     <!-- Login Card -->
-    <div class="card form-card" id="loginCard">
+    <div class="card" id="loginCard">
       <h2>Login</h2>
       <form id="loginForm">
-        <input type="email" id="loginEmail" placeholder="Email" required><br>
-        <input type="password" id="loginPassword" placeholder="Password" required><br>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
         <button type="submit">Login</button>
       </form>
       <button id="googleLogin">Login with Google</button>
-      <p>Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a></p>
+      <p><a href="#" onclick="showSignup()">Don't have an account? Sign Up</a></p>
       <p><a href="#" id="forgotPassword">Forgot Password?</a></p>
     </div>
 
     <!-- Signup Card -->
-    <div class="card form-card slide-right" id="signupCard">
+    <div class="card" id="signupCard">
       <h2>Sign Up</h2>
       <form id="signupForm">
-        <input type="text" id="signupUsername" placeholder="Username" required><br>
-        <input type="email" id="signupEmail" placeholder="Email" required><br>
-        <input type="password" id="signupPassword" placeholder="Password" required><br>
+        <input type="email" id="signupEmail" placeholder="Email" required>
+        <input type="password" id="signupPassword" placeholder="Password" required>
+        <input type="text" id="signupUsername" placeholder="Username" required>
         <button type="submit">Sign Up</button>
-<p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
- </form>
+      </form>
+      <p><a href="#" onclick="showLogin()">Already have an account? Login</a></p>
     </div>
   </div>
 </body>
