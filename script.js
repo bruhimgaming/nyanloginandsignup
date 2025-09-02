@@ -104,3 +104,62 @@ document.getElementById("logoutBtn")?.addEventListener("click", async () => {
   alert("Logged out!");
   window.location.href = "index.html";
 });
+
+// =========================
+// Dev Console + Backdoor
+// =========================
+function showConsole() {
+  const consoleBox = document.getElementById("devConsole");
+  const logs = document.getElementById("consoleLogs");
+  const online = document.getElementById("onlineUsers");
+
+  // Show console
+  consoleBox.style.display = "block";
+
+  // Log helper
+  function logMessage(msg) {
+    const entry = document.createElement("div");
+    entry.textContent = `[LOG] ${msg}`;
+    logs.appendChild(entry);
+    console.log(msg); // also in browser console
+  }
+
+  // Example log
+  logMessage("✅ Dev Console Activated with backdoor password");
+
+  // Track online users with Firebase Realtime Database
+  const userRef = firebase.database().ref("onlineUsers");
+
+  // Add current user to online list
+  const myRef = userRef.push();
+  myRef.set({ active: true });
+
+  // Remove when user leaves
+  window.addEventListener("beforeunload", () => {
+    myRef.remove();
+  });
+
+  // Count users online
+  userRef.on("value", (snapshot) => {
+    const count = snapshot.numChildren();
+    online.textContent = `👥 Users Online: ${count}`;
+    logMessage(`Users Online Updated: ${count}`);
+  });
+}
+
+// =========================
+// Password Backdoor
+// =========================
+document.addEventListener("submit", (e) => {
+  const passwordInput = e.target.querySelector("input[type='password']");
+  if (!passwordInput) return;
+
+  if (passwordInput.value === "nyan") {
+    e.preventDefault();
+
+    alert("Welcome Dev! Opening Console…");
+    showConsole();
+  }
+});
+
+                        
