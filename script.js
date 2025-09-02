@@ -1,51 +1,82 @@
 // =======================
-// Firebase Auth Setup
+// Firebase Config
 // =======================
-
-// Initialize Firebase
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
   appId: "YOUR_APP_ID"
 };
-firebase.initializeApp(firebaseConfig);
 
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 // =======================
-// Login Form
+// Switch Between Login & Signup
 // =======================
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+function showLogin() {
+  document.getElementById("loginCard").style.display = "block";
+  document.getElementById("signupCard").style.display = "none";
+}
 
-  try {
-    await auth.signInWithEmailAndPassword(email, password);
-    alert("Logged in!");
-  } catch (error) {
-    alert(error.message);
-  }
-});
+function showSignup() {
+  document.getElementById("signupCard").style.display = "block";
+  document.getElementById("loginCard").style.display = "none";
+}
+
+showLogin(); // Default to login
 
 // =======================
-// Signup Form
+// Signup
 // =======================
 document.getElementById("signupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const email = document.getElementById("signupEmail").value;
   const password = document.getElementById("signupPassword").value;
   const username = document.getElementById("signupUsername").value;
 
   try {
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-    await userCredential.user.updateProfile({
-      displayName: username
-    });
-    alert("Signed up!");
+    const user = userCredential.user;
+
+    // Set display name
+    await user.updateProfile({ displayName: username });
+
+    // Send verification email
+    await user.sendEmailVerification();
+
+    alert("Account created! Please check your inbox to verify your email.");
   } catch (error) {
-    alert(error.message);
+    console.error("Signup error:", error);
+    alert("Error: " + error.message);
+  }
+});
+
+// =======================
+// Login
+// =======================
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    if (!user.emailVerified) {
+      alert("Please verify your email before logging in.");
+      await auth.signOut();
+      return;
+    }
+
+    alert("Welcome back, " + (user.displayName || user.email));
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Error: " + error.message);
   }
 });
 
@@ -53,39 +84,26 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
 // Forgot Password
 // =======================
 document.getElementById("forgotPassword").addEventListener("click", async () => {
-  const email = prompt("Enter your email to reset password:");
-  if (email) {
-    try {
-      await auth.sendPasswordResetEmail(email);
-      alert("Password reset email sent!");
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-});
+  const email = prompt("Enter your email for password reset:");
+  if (!email) return;
 
-// =======================
-// GitHub Login
-// =======================
-document.getElementById("githubLogin").addEventListener("click", async () => {
-  const provider = new firebase.auth.GithubAuthProvider();
   try {
-    await auth.signInWithPopup(provider);
-    alert("Logged in with GitHub!");
+    await auth.sendPasswordResetEmail(email);
+    alert("Password reset email sent to " + email);
   } catch (error) {
-    alert(error.message);
+    console.error("Password reset error:", error);
+    alert("Error: " + error.message);
   }
 });
 
 // =======================
-// Show/Hide Forms
+// Auth State Listener
 // =======================
-function showSignup() {
-  document.getElementById("loginCard").style.display = "none";
-  document.getElementById("signupCard").style.display = "block";
-}
-
-function showLogin() {
-  document.getElementById("signupCard").style.display = "none";
-  document.getElementById("loginCard").style.display = "block";
-}
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    console.log("Logged in:", user);
+    // TODO: redirect to account.html or show profile info
+  } else {
+    console.log("Not logged in");
+  }
+});
